@@ -4,3 +4,8 @@
 **/.gradle/*
 **/.project
 **/.settings/*
+**/.idea/*
+**/gradlew*
+**/gradle/*
+*.iml
+**/build/*
