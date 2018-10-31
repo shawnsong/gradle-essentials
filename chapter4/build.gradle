@@ -1,0 +1,5 @@
+def cl1 = {
+    println "hello world!"
+}
+
+cl1.call()

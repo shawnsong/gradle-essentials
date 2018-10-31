@@ -1,4 +1,12 @@
-apply plugin: 'war'
+plugins {
+    id "org.akhikhl.gretty" version "1.2.4"
+    id "war"
+}
+
+gretty {
+    servletContainer = 'tomcat8'
+    port = 8080
+}
 
 repositories {
     mavenCentral()
