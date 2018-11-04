@@ -1,5 +1,69 @@
+// apply plugin: 'java'
+// apply (plugin: java)
+apply ({
+    plugin: java
+})
+
+
+
 def cl1 = {
     println "hello world!"
 }
 
-cl1.call()
+def cl2 = { n ->
+    println "value of param: $n"
+}
+
+
+task callFunc << {
+    cl1.call()
+
+    cl2(1000)
+
+    // closure
+    3.times {println ("square value is: " + it * it) }
+
+    // data structure
+    // list
+    def aList = ['a','b','c']
+    println aList.getClass()
+    println aList[1]
+
+    def list = [10, 20, 30] + [40, 50]
+    list << 60
+    println "This is a list: " + list
+
+    // set
+    def aSet = [1,2,3] as Set
+    aSet << 4
+    aSet << 3
+    println "This is a set: " + aSet
+
+    // map
+    def tool = [version:'2.8', name:'Gradle', platform:'all']
+    println "This is a map: " + tool
+
+    methodWithParamsInMap([a: 2, b: 3])
+}
+
+def methodWithParamsInMap(Map options) {
+    def a = options.a ?: 10 // returns a if a exists, otherwise returns 10
+    def b = options.b ?: 20
+
+    println ("a + b = " + (a + b))
+
+    println("Method with var args: " + methodWithVarArgs(1, 2, 3))  // 1 + 4 + 9
+
+    println("Method with closure: " + methodWithClosure(3, { arg ->
+        def base = arg
+        return base + arg * arg
+    }))
+}
+
+def methodWithVarArgs(...numbers) {
+    numbers.collect{ it * it }.sum()
+}
+
+def methodWithClosure(arg1, cls) {
+    cls.call(arg1)
+}
