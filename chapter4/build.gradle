@@ -1,10 +1,14 @@
 // apply plugin: 'java'
-// apply (plugin: java)
-apply ({
-    plugin: java
-})
+// apply (plugin:'java')
+project.apply ([plugin: 'java'])
 
+project.repositories {
+    mavenCentral()
+}
 
+project.dependencies {
+    testCompile('junit:junit:4.11')
+}
 
 def cl1 = {
     println "hello world!"
@@ -14,6 +18,27 @@ def cl2 = { n ->
     println "value of param: $n"
 }
 
+def methodWithParamsInMap(Map options) {
+    def a = options.a ?: 10 // returns a if a exists, otherwise returns 10
+    def b = options.b ?: 20
+
+    println ("a + b = " + (a + b))
+
+    println("Method with var args: " + methodWithVarArgs(1, 2, 3))  // 1 + 4 + 9
+
+    println("Method with closure: " + methodWithClosure(3, { arg ->
+        def base = arg
+        return base + arg * arg
+    }))
+}
+
+def methodWithVarArgs(...numbers) {
+    numbers.collect{ it * it }.sum()
+}
+
+def methodWithClosure(arg1, cls) {
+    cls.call(arg1)
+}
 
 task callFunc << {
     cl1.call()
@@ -46,24 +71,34 @@ task callFunc << {
     methodWithParamsInMap([a: 2, b: 3])
 }
 
-def methodWithParamsInMap(Map options) {
-    def a = options.a ?: 10 // returns a if a exists, otherwise returns 10
-    def b = options.b ?: 20
+// build has three stages: initialisation, configuration and execution
+description =  "a sample project"
+version = "1.0"
 
-    println ("a + b = " + (a + b))
-
-    println("Method with var args: " + methodWithVarArgs(1, 2, 3))  // 1 + 4 + 9
-
-    println("Method with closure: " + methodWithClosure(3, { arg ->
-        def base = arg
-        return base + arg * arg
-    }))
+task printProperties (dependsOn: callFunc) << {
+    println project.version
+    println project.property("description")
 }
 
-def methodWithVarArgs(...numbers) {
-    numbers.collect{ it * it }.sum()
+class Print extends DefaultTask {
+    @Input
+    String message = "welcome to gradle"
+
+    @TaskAction
+    def print() {
+        println "$message"
+    }
 }
 
-def methodWithClosure(arg1, cls) {
-    cls.call(arg1)
+task welcome(type: Print)
+
+task thanks(type: Print) {
+    message = "This is a custom task"
 }
+
+task bye(type: Print)
+bye.message = "See you"
+
+thanks.dependsOn(welcome)
+thanks.finalizedBy(bye)
+
